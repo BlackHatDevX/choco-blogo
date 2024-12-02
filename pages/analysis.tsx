@@ -9,15 +9,16 @@ import {
 import axios from "axios";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { ChartData } from "chart.js"; // Import ChartData type
 
 // Register Chart.js components
 ChartJS.register(BarElement, CategoryScale, LinearScale);
 
 // Type for Post
 interface Post {
-  score: any;
-  totalWords: ReactNode;
-  repetitions: ReactNode;
+  score: number; // Changed to number
+  totalWords: number;
+  repetitions: number;
   id: number;
   title: string;
   content: string;
@@ -37,12 +38,12 @@ const analyzeText = (text: string) => {
   const uniqueWords = Object.keys(wordCounts).length;
   const repetitions = totalWords - uniqueWords;
 
-  return { wordCounts, repetitions, totalWords };
+  return { wordCounts, repetitions, totalWords }; // Still returns totalWords
 };
 
-const calculateScore = (text: string) => {
-  const misspelled = 0; // Mocked spelling check (integrate spell checker API locally if needed)
-  const totalWords = text.split(/\s+/).length;
+const calculateScore = (text: string, repetitions: number) => {
+  const misspelled = 0; // Mocked spelling check
+  // const totalWords = text.split(/\s+/).length;
 
   // Score logic (customizable)
   return Math.max(100 - misspelled - repetitions, 0);
@@ -51,7 +52,11 @@ const calculateScore = (text: string) => {
 const AnalysisPage = () => {
   const router = useRouter();
   const [posts, setPosts] = useState<Post[]>([]);
-  const [chartData, setChartData] = useState<any>(null);
+  const [chartData, setChartData] = useState<ChartData<
+    "bar",
+    number[],
+    string
+  > | null>(null); // Specified type
   const [isAdmin, setIsAdmin] = useState(false);
 
   const checkAdminSession = async () => {
@@ -63,23 +68,36 @@ const AnalysisPage = () => {
         router.push("/"); // Redirect to the homepage or another page
       }
     } catch (error) {
+      console.log(error);
       setIsAdmin(false);
       router.push("/"); // Redirect on error
     }
   };
 
   useEffect(() => {
-    fetchPosts();
+    checkAdminSession(); // Check admin session on page load
   }, []);
 
   const fetchPosts = async () => {
     try {
       const response = await fetch("/api/analyze-posts");
       const data = await response.json();
-      setPosts(data);
 
-      const labels = data.map((post: Post) => post.title);
-      const scores = data.map((post: Post) => post.score);
+      const analyzedPosts = data.map((post: Post) => {
+        const { repetitions, totalWords } = analyzeText(post.content);
+        const score = calculateScore(post.content, repetitions);
+        return {
+          ...post,
+          score,
+          totalWords,
+          repetitions,
+        };
+      });
+
+      setPosts(analyzedPosts);
+
+      const labels = analyzedPosts.map((post: Post) => post.title);
+      const scores = analyzedPosts.map((post: Post) => post.score);
 
       setChartData({
         labels,
@@ -99,7 +117,6 @@ const AnalysisPage = () => {
   };
 
   useEffect(() => {
-    checkAdminSession(); // Check admin session on page load
     if (isAdmin) {
       fetchPosts(); // Fetch posts if the user is an admin
     }

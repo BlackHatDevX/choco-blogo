@@ -17,6 +17,8 @@ export default function CreatePost() {
         router.push("/"); // Redirect to the homepage if not admin
       }
     } catch (error) {
+      console.log(error);
+
       setIsAdmin(false);
       router.push("/"); // Redirect on error
     }

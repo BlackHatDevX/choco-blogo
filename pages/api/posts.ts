@@ -15,6 +15,8 @@ export default async function handler(
         const posts = await prisma.post.findMany();
         res.status(200).json(posts);
       } catch (error) {
+        console.log(error);
+
         res.status(500).json({ error: "Failed to fetch posts" });
       }
       break;
@@ -25,6 +27,8 @@ export default async function handler(
         const newPost = await prisma.post.create({ data: { title, content } });
         res.status(201).json(newPost);
       } catch (error) {
+        console.log(error);
+
         res.status(500).json({ error: "Failed to create post" });
       }
       break;

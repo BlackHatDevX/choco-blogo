@@ -32,6 +32,7 @@ export default function Home() {
       setIsAdmin(response.data.isAdmin);
     } catch (error) {
       setIsAdmin(false);
+      console.log(error);
     }
   };
 
@@ -42,6 +43,8 @@ export default function Home() {
       setIsAdmin(true);
       setShowLoginForm(false); // Hide form after successful login
     } catch (error) {
+      console.log(error);
+
       alert("Invalid credentials");
     }
   };
@@ -51,6 +54,8 @@ export default function Home() {
       await axios.post("/api/logout");
       setIsAdmin(false);
     } catch (error) {
+      console.log(error);
+
       console.error("Logout failed");
     }
   };

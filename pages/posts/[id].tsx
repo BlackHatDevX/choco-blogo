@@ -14,21 +14,40 @@ export default function PostDetails() {
   const { id } = router.query;
 
   useEffect(() => {
-    fetchPosts();
+    // Check if the id is available and is a valid number
+    if (id) {
+      fetchPost(id);
+    }
   }, [id]);
 
-  const fetchPosts = async () => {
-    const response = await fetch("/api/posts");
-    const data = await response.json();
-    setPost(data[id - 1]);
+  const fetchPost = async (postId: string | string[]) => {
+    try {
+      const response = await fetch("/api/posts");
+      const data = await response.json();
+
+      // Ensure postId is parsed to a number, assuming id in URL is a string
+      const postIndex = Array.isArray(postId) ? postId[0] : postId;
+      const postIdNumber = parseInt(postIndex, 10);
+
+      // Adjust if the post ID is valid
+      if (postIdNumber && postIdNumber > 0 && postIdNumber <= data.length) {
+        setPost(data[postIdNumber - 1]); // Assuming the ID matches the post's index (1-based)
+      } else {
+        setPost(null); // Handle invalid post id
+      }
+    } catch (error) {
+      console.error("Error fetching post:", error);
+      setPost(null);
+    }
   };
 
-  if (!post)
+  if (!post) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-[#4e3621] text-white">
         Loading...
       </div>
     );
+  }
 
   return (
     <div className="bg-gradient-to-b from-[#4e3621] to-[#8b4513] min-h-screen text-white">
