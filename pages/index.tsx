@@ -63,7 +63,7 @@ export default function Home() {
   return (
     <div className="bg-gradient-to-b from-[#4e3621] to-[#8b4513] min-h-screen text-white">
       <nav className="bg-[#3c2f2f] p-4 flex justify-between items-center shadow-lg">
-        <h1 className="text-2xl font-bold">Blogo</h1>
+        <h1 className="text-2xl font-bold">Choco Blogo</h1>
         {!isAdmin ? (
           <button
             onClick={() => setShowLoginForm(!showLoginForm)} // Toggle form visibility
@@ -95,7 +95,7 @@ export default function Home() {
 
       <main className="container mx-auto p-4">
         <h1 className="text-3xl font-bold mb-6 text-center">
-          Welcome to the Blogo
+          Welcome to the Choco Blogo
         </h1>
         {isAdmin ? (
           <p className="text-center mb-6">You are in Admin Mode.</p>

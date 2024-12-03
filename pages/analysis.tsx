@@ -135,7 +135,7 @@ const AnalysisPage = () => {
       {/* Navigation Bar */}
       <nav className="bg-[#3c2f2f] p-4 flex justify-between items-center shadow-lg">
         <Link href="/">
-          <h1 className="text-2xl font-bold">Blogo</h1>
+          <h1 className="text-2xl font-bold">Choco Blogo</h1>
         </Link>
         <div className="flex space-x-4">
           <button
