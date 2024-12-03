@@ -40,12 +40,8 @@ export default async function handler(
         break;
     }
   } catch (error) {
+    console.log(error);
     console.error("API Error:", error);
-    if (error === "P1001") {
-      res.status(500).json({ error: "Unable to connect to the database." });
-    } else {
-      res.status(500).json({ error: "Internal Server Error." });
-    }
   } finally {
     await prisma.$disconnect();
   }
