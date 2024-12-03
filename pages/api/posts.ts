@@ -39,16 +39,14 @@ export default async function handler(
         res.status(405).end(`Method ${method} Not Allowed`);
         break;
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error("API Error:", error);
-
-    // Handle database connection issues
-    if (error.code === "P1001") {
+    if (error === "P1001") {
       res.status(500).json({ error: "Unable to connect to the database." });
     } else {
       res.status(500).json({ error: "Internal Server Error." });
     }
   } finally {
-    await prisma.$disconnect(); // Ensure Prisma client disconnects
+    await prisma.$disconnect();
   }
 }
