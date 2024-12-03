@@ -9,32 +9,46 @@ export default async function handler(
 ) {
   const { method } = req;
 
-  switch (method) {
-    case "GET":
-      try {
+  try {
+    switch (method) {
+      case "GET":
+        // Fetch all posts
         const posts = await prisma.post.findMany();
         res.status(200).json(posts);
-      } catch (error) {
-        console.log(error);
+        break;
 
-        res.status(500).json({ error: "Failed to fetch posts" });
-      }
-      break;
-
-    case "POST":
-      try {
+      case "POST":
+        // Create a new post
         const { title, content } = req.body;
-        const newPost = await prisma.post.create({ data: { title, content } });
+
+        if (!title || !content) {
+          res.status(400).json({ error: "Title and content are required." });
+          return;
+        }
+
+        const newPost = await prisma.post.create({
+          data: { title, content },
+        });
+
         res.status(201).json(newPost);
-      } catch (error) {
-        console.log(error);
+        break;
 
-        res.status(500).json({ error: "Failed to create post" });
-      }
-      break;
+      default:
+        // Handle unsupported methods
+        res.setHeader("Allow", ["GET", "POST"]);
+        res.status(405).end(`Method ${method} Not Allowed`);
+        break;
+    }
+  } catch (error: any) {
+    console.error("API Error:", error);
 
-    default:
-      res.setHeader("Allow", ["GET", "POST"]);
-      res.status(405).end(`Method ${method} Not Allowed`);
+    // Handle database connection issues
+    if (error.code === "P1001") {
+      res.status(500).json({ error: "Unable to connect to the database." });
+    } else {
+      res.status(500).json({ error: "Internal Server Error." });
+    }
+  } finally {
+    await prisma.$disconnect(); // Ensure Prisma client disconnects
   }
 }

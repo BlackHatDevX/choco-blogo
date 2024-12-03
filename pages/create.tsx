@@ -50,7 +50,7 @@ export default function CreatePost() {
     <div className="bg-gradient-to-b from-[#4e3621] to-[#8b4513] min-h-screen text-white">
       <nav className="bg-[#3c2f2f] p-4 flex justify-between items-center shadow-lg">
         <Link href="/">
-          <h1 className="text-2xl font-bold">Chocolate Blog</h1>
+          <h1 className="text-2xl font-bold">Blogo</h1>
         </Link>
         <div className="flex space-x-4">
           <button
